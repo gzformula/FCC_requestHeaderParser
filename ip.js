@@ -9,7 +9,6 @@ var getClientAddress = function (req) {
 
  module.exports = function (request, callback) { 
      var ip = getClientAddress(request);
-     console.log("ip Address:", ip);
     callback(null,ip);
 };
 

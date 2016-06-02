@@ -5,7 +5,9 @@ var express     = require('express'),
     app         = express(),
     port = process.env.PORT || 8080,
     requestLanguage = require('express-request-language'),
-    cookieParser = require('cookie-parser');
+    cookieParser = require('cookie-parser'),
+    os = require('os'),
+    platform = require('platform');
  
 app.use(express.static('public'));
 
@@ -37,8 +39,14 @@ app.get("/index", function(request, response) {
 
 app.get("/api/whoami", function(request, response) {
 	console.log("Language:", request.language);
+    
+    console.log(platform.name); // 'IE'
+	console.log(platform.version); // '10.0'
+	console.log(platform.layout); // 'Trident'
+	console.log(platform.os); // 'Windows Server 2008 R2 / 7 x64'
+	console.log(platform.description); // 'IE 10.0 x86 (platform preview; running in IE 7 mode) on Windows Server 2008 R2 / 7 x64'
 
-    ipMod(root, function(err, ipinfo) {
+    ipMod(request, function(err, ipinfo) {
        if (err) throw err;
          console.log(ipinfo);
          response.send(ipinfo);
