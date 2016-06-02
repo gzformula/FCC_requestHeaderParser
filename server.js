@@ -12,17 +12,13 @@ app.use(express.static('public'));
 app.use(cookieParser());
 
 app.use(requestLanguage({
-  languages: ['en-US', 'zh-CN'],
+  languages: ['en-US', 'zh-CN', 'ru', 'uk', 'ru-mo', 'be'],
   cookie: {
     name: 'language',
     options: { maxAge: 24*3600*1000 },
     url: '/languages/{language}'
   }
 }));
-
-app.get('/', function(req, res, next) {
- 
-});
 
 app.listen(port,  function () {
 	console.log('Node.js listening on port ' + port + '...');
@@ -40,8 +36,7 @@ app.get("/index", function(request, response) {
 });
 
 app.get("/api/whoami", function(request, response) {
-
-	console.log(request.language); // 'en-US'
+	console.log("Language:", request.language);
 
     ipMod(root, function(err, ipinfo) {
        if (err) throw err;
