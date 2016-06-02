@@ -1,33 +1,53 @@
 'use strict';
 
-var express = require('express');
-var routes = require('./app/routes/index.js');
-var mongoose = require('mongoose');
-var passport = require('passport');
-var session = require('express-session');
+var express     = require('express'),
+    ipMod = require('./ip.js'),
+    app         = express(),
+    port = process.env.PORT || 8080,
+    requestLanguage = require('express-request-language'),
+    cookieParser = require('cookie-parser');
+ 
+app.use(express.static('public'));
 
-var app = express();
-require('dotenv').load();
-require('./app/config/passport')(passport);
+app.use(cookieParser());
 
-mongoose.connect(process.env.MONGO_URI);
-
-app.use('/controllers', express.static(process.cwd() + '/app/controllers'));
-app.use('/public', express.static(process.cwd() + '/public'));
-app.use('/common', express.static(process.cwd() + '/app/common'));
-
-app.use(session({
-	secret: 'secretClementine',
-	resave: false,
-	saveUninitialized: true
+app.use(requestLanguage({
+  languages: ['en-US', 'zh-CN'],
+  cookie: {
+    name: 'language',
+    options: { maxAge: 24*3600*1000 },
+    url: '/languages/{language}'
+  }
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
+app.get('/', function(req, res, next) {
+ 
+});
 
-routes(app, passport);
-
-var port = process.env.PORT || 8080;
 app.listen(port,  function () {
 	console.log('Node.js listening on port ' + port + '...');
+});
+
+app.get("/index", function(request, response) {
+        if (root == '' || root == 'index.html') {
+        response.writeHead(301, {
+          Location: (request.socket.encrypted ? 'https://' : 'http://') +
+          request.headers.host + '/index.html'}
+    );
+    response.end();
+    return;
+    }
+});
+
+app.get("/api/whoami", function(request, response) {
+
+	console.log(request.language); // 'en-US'
+
+    ipMod(root, function(err, ipinfo) {
+       if (err) throw err;
+         console.log(ipinfo);
+         response.send(ipinfo);
+    });
+    
+    response.end();
 });
