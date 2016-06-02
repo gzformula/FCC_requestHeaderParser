@@ -7,7 +7,7 @@ var express     = require('express'),
     requestLanguage = require('express-request-language'),
     cookieParser = require('cookie-parser'),
     os = require('os'),
-    platform = require('platform');
+    platformMod = require('platform');
  
 app.use(express.static('public'));
 
@@ -38,19 +38,15 @@ app.get("/index", function(request, response) {
 });
 
 app.get("/api/whoami", function(request, response) {
-	console.log("Language:", request.language);
-    
-    console.log(platform.name); // 'IE'
-	console.log(platform.version); // '10.0'
-	console.log(platform.layout); // 'Trident'
-	console.log(platform.os); // 'Windows Server 2008 R2 / 7 x64'
-	console.log(platform.description); // 'IE 10.0 x86 (platform preview; running in IE 7 mode) on Windows Server 2008 R2 / 7 x64'
-
-    ipMod(request, function(err, ipinfo) {
+	var lang = request.language;
+	var desc = platformMod.description; // 'IE 10.0 x86 (platform preview; running in IE 7 mode) on Windows Server 2008 R2 / 7 x64'
+    var ipinfo = "";
+    ipMod(request, function(err, ip) {
        if (err) throw err;
-         console.log(ipinfo);
-         response.send(ipinfo);
+       ipinfo = ip;
     });
-    
+    //{"ipaddress":"71.120.189.78","language":"en-US","software":"Windows NT 10.0; WOW64"}
+    var responseString = JSON.stringify({ ipaddress: ipinfo, language: lang, software: desc });
+    response.send(responseString);
     response.end();
 });
