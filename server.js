@@ -1,13 +1,11 @@
 'use strict';
 
 var express     = require('express'),
-    ipMod = require('./ip.js'),
     app         = express(),
     port = process.env.PORT || 8080,
     requestLanguage = require('express-request-language'),
-    cookieParser = require('cookie-parser'),
-    os = require('os'),
-    platformMod = require('platform');
+    cookieParser = require('cookie-parser');
+
  
 app.use(express.static('public'));
 
@@ -36,17 +34,16 @@ app.get("/index", function(request, response) {
     return;
     }
 });
-
-app.get("/api/whoami", function(request, response) {
-	var lang = request.language;
-	var desc = platformMod.description; // 'IE 10.0 x86 (platform preview; running in IE 7 mode) on Windows Server 2008 R2 / 7 x64'
-    var ipinfo = "";
-    ipMod(request, function(err, ip) {
-       if (err) throw err;
-       ipinfo = ip;
-    });
-    //{"ipaddress":"71.120.189.78","language":"en-US","software":"Windows NT 10.0; WOW64"}
-    var responseString = JSON.stringify({ ipaddress: ipinfo, language: lang, software: desc });
-    response.send(responseString);
-    response.end();
+    
+app.get("/api/whoami", function(req, res) {
+  var user = {
+    agent: req.headers['user-agent'], // User Agent we get from headers
+    referrer: req.headers['referrer'], //  Likewise for referrer
+    ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress, // Get IP - allow for proxy
+  };
+  var lang = req.language;
+    var responseString = JSON.stringify({ ipaddress: user.ip, language: lang, software: user.agent });
+    res.send(responseString);
+  console.log(user);
+  res.end();
 });

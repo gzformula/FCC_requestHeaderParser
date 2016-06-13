@@ -26,5 +26,16 @@
 				}
             </code>
         </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+        <script type="text/javascript">
+        $(document).ready(function(){   
+            // Send screen size and whatever else that is not available from headers
+            var language = window.navigator.userLanguage || window.navigator.language;
+            // alert(language); //works IE/SAFARI/CHROME/FF
+            $.post('/api/whoami', { width: screen.width, height: screen.height, lang: language }, function(res) {
+          }); 
+         }); 
+        </script>
     </body>
 </html>
